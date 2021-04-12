@@ -1,8 +1,8 @@
 #!/usr/bin/env nextflow
 
-params.input_dir = "$HOME/data/Projects/example_metaGs/test_metaGs/03_Assembly/"
-params.output_dir = "$HOME/data/Projects/example_metaGs/test_metaGs/04_Binning/"
-params.qaqc = "$HOME/data/Projects/example_metaGs/test_metaGs/02_qaqc/"
+params.input_dir = "/home/overholt/work/test_metaGs/03_Assembly/"
+params.output_dir = "/home/overholt/work/test_metaGs/04_Binning"
+params.qaqc = "/home/overholt/work/test_metaGs/02_qaqc/"
 
 sample_dir = Channel
     .fromPath("${params.input_dir}/H*/", type: 'dir')
@@ -52,7 +52,8 @@ process run_metawrap {
     tag {sample_id.baseName}
 
     cpus '4'
-
+    time '12h'
+    clusterOptions '--mem-per-cpu=10G'
     input:
     tuple file(sample_id), file(trimmed) from trimmed_1000bp_scaffold
     file(qaqc_dir) from qaqc_file
@@ -82,7 +83,9 @@ process run_metawrap {
 process binsanity_profiler {
     tag {sample_id.baseName}
 
-    cpus 10
+    cpus '5'
+    time '4h'
+    clusterOptions '--mem-per-cpu=5G'
 
     input:
     path(bams) from metawrap_bams
@@ -113,7 +116,9 @@ process binsanity_profiler {
 process binsanity_binning {
     tag {sample_id.baseName}
    
-    cpus 10
+    cpus '5'
+    time '12h'
+    clusterOptions '--mer-per-cpu=10G'
 
     input:
     tuple file(sample_id), file(cov) from binsanity_lognorm
@@ -139,6 +144,8 @@ process binsanity_binning {
 }
 
 process rename_binsanity_bins {
+    executor 'local'
+
     tag {sample_id.baseName}
     
     input:
@@ -165,6 +172,7 @@ process rename_binsanity_bins {
 
 
 process clean_up {
+    executor 'local'
     tag {sample_id.baseName}
     
     input:
@@ -182,9 +190,11 @@ process clean_up {
 
 process refine_bins {
     tag {sample_id.baseName}
-    cpus 10
-    memory '200 GB'
-
+    cpus 2
+    //memory '200 GB'
+    time '48h'
+    clusterOptions '--mem-per-cpu=50G'
+ 
     input:
     tuple file(sample_id), path(max) from maxbins
     path meta from metabat_bins
