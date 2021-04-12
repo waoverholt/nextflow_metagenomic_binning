@@ -41,6 +41,8 @@ process trim_scaffolds {
     cp scaffolds_1000_ids.txt ${params.input_dir}/${sample_id.baseName}/scaffolds_1000_ids.txt
     cp scaffolds_3000.fasta ${params.input_dir}/${sample_id.baseName}/scaffolds_3000.fasta
     cp scaffolds_3000_ids.txt ${params.input_dir}/${sample_id.baseName}/scaffolds_3000_ids.txt
+    
+    mkdir -p ${params.output_dir}
     """
 }
 
