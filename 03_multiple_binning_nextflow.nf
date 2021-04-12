@@ -120,7 +120,7 @@ process binsanity_binning {
    
     cpus '5'
     time '12h'
-    clusterOptions '--mer-per-cpu=10G'
+    clusterOptions '--mem-per-cpu=10G'
 
     input:
     tuple file(sample_id), file(cov) from binsanity_lognorm
