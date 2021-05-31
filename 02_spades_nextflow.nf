@@ -1,6 +1,6 @@
 #!/usr/bin/env nextflow
 
-params.reads = "/home/overholt/kuesel_data/Siberia/02_qaqc/deplete_euks/*_R{1,2}.fastq"
+params.reads = "/home/overholt/kuesel_data/Siberia/02_qaqc/deplete_euks/error_correct/*_R{1,2}.fastq"
 params.output_dir = "/home/overholt/kuesel_data/Siberia/03_Assembly/"
 
 Channel
@@ -15,8 +15,8 @@ process metaspades {
     publishDir "${params.output_dir}", mode: 'copy'
 	
 	cpus = '4' 
-	clusterOptions = '--mem-per-cpu=20G'
-	time = '4h'
+	clusterOptions = '--mem-per-cpu=80G'
+	time = '96h'
  
     input:
     set pair_id, file(reads) from read_pairs
@@ -26,7 +26,8 @@ process metaspades {
 
     script:
     """
+    export OMP_NUM_THREADS=${task.cpus}
     spades.py --meta -o ${pair_id} -1 ${reads[0]} -2 ${reads[1]} -t ${task.cpus} \
-    -m 80 --tmp-dir $TMP 
+    -m 300 --tmp-dir $TMP --only-assembler 
     """
 }

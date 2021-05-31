@@ -1,0 +1,2 @@
+/software/lmod/lmod/init/bash: line 15: __lmod_vx: unbound variable
+.command.run: line 82: activate: No such file or directory
